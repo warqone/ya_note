@@ -13,22 +13,22 @@ class TestRoutes(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.author = User.objects.create(
-            username='Test_author',
+        cls.user = User.objects.create(
+            username='TestUser',
         )
-        cls.else_author = User.objects.create(
-            username='Else_Author',
+        cls.else_user = User.objects.create(
+            username='ElseUser',
         )
         cls.note = Note.objects.create(
             title='Заголовок',
             text='Текст',
             slug='slug',
-            author=cls.author,
+            author=cls.user,
         )
 
     def test_pages_availability_for_note_author_user(self):
         """Проверка отображения страниц для залогиненного автора."""
-        self.client.force_login(self.author)
+        self.client.force_login(self.user)
         urls = (
             ('notes:home', None),
             ('notes:add', None),
@@ -46,7 +46,7 @@ class TestRoutes(TestCase):
 
     def test_availability_for_else_author(self):
         """Проверка на управление заметкой другого автора."""
-        self.client.force_login(self.else_author)
+        self.client.force_login(self.else_user)
         urls = (
             ('notes:edit', (self.note.slug,)),
             ('notes:detail', (self.note.slug,)),
@@ -75,3 +75,18 @@ class TestRoutes(TestCase):
                 redirect_url = f'{login_url}?next={url}'
                 response = self.client.get(url)
                 self.assertRedirects(response, redirect_url)
+
+    def test_login_logout_registration_pages_availability(self):
+        """Проверка доступности страниц login, logout, registation
+        для всех пользователей.
+        """
+        urls = (
+            'users:login',
+            'users:logout',
+            'users:signup',
+        )
+        for name in urls:
+            with self.subTest(name=name):
+                url = reverse(name)
+                response = self.client.get(url)
+                self.assertEqual(response.status_code, HTTPStatus.OK)
