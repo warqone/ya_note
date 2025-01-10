@@ -36,22 +36,20 @@ class TestContent(TestCase):
         cls.note_detail = reverse('notes:detail', args=(cls.note.slug,))
 
     def test_notes_have_note(self):
-        """Проверка что заметка есть в списке заметок."""
+        """Заметка есть в списке заметок."""
         response = self.auth_user.get(self.notes_list)
         self.assertIn('object_list', response.context)
         objects = response.context['object_list']
         self.assertIn(self.note, objects)
 
     def test_notes_from_another_user_not_availability(self):
-        """Проверка что заметки другого пользователя недоступны."""
+        """Заметки другого пользователя недоступны."""
         response = self.auth_user.get(self.notes_list)
         objects = response.context['object_list']
         self.assertNotIn(self.else_note, objects)
 
     def test_form_in_add_and_edit_note(self):
-        """Проверка что форма заполнения присутствует в добавлении
-        и удалении заметки.
-        """
+        """Форма заполнения присутствует в добавлении и удалении заметки."""
         urls = (
             ('notes:add', None),
             ('notes:edit', (self.note.slug,))

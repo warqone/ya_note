@@ -45,7 +45,7 @@ class TestRoutes(TestCase):
                 self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_availability_for_else_author(self):
-        """Проверка на управление заметкой другого автора."""
+        """Управление заметкой другого автора невозможно."""
         self.client.force_login(self.else_user)
         urls = (
             ('notes:edit', (self.note.slug,)),
@@ -59,7 +59,7 @@ class TestRoutes(TestCase):
                 self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
     def test_for_anonymous_client(self):
-        """Проверка на редирект для незалогиненного пользователя."""
+        """Редирект для незалогиненного пользователя."""
         login_url = reverse('users:login')
         urls = (
             ('notes:add', None),
@@ -77,9 +77,7 @@ class TestRoutes(TestCase):
                 self.assertRedirects(response, redirect_url)
 
     def test_login_logout_registration_pages_availability(self):
-        """Проверка доступности страниц login, logout, registation
-        для всех пользователей.
-        """
+        """Страницы профиля доступны для всех пользователей."""
         urls = (
             'users:login',
             'users:logout',
